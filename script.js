@@ -39,7 +39,7 @@ function disableButtons(){
 
 function getWinner(){
     if (playerScore === 5) {
-        result.textContent = "🏆 Player wins the game!";
+        result.textContent = `🏆 ${capitalize(playerName)} wins the game!`;
         disableButtons();
     } else if (computerScore === 5){
         result.textContent = "🤖 Computer wins the game!";
