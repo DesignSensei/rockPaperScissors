@@ -1,73 +1,74 @@
-let choices = ["rock", "paper", "scissors"];
+const choices = ['rock', 'paper', 'scissors'];
 
-let validChoices = ["rock", "paper", "scissors"];
+const rockButton = document.querySelector('.rockButton');
+const paperButton = document.querySelector('.paperButton');
+const scissorsButton = document.querySelector('.scissorsButton');
+const result = document.querySelector('#displayResult');
+const finalScore = document.querySelector('#finalScore');
+const nameInput = document.querySelector('input');
 
-let humanScore = 0;
+
+let playerScore = 0;
 let computerScore = 0;
 
-// Function to get a random computer choice
-function getComputerChoice() {
-    let randomIndex = Math.floor(Math.random() * choices.length);
-    return choices[randomIndex];
+function getInputValue(){
+    return nameInput.value.trim();;
 }
 
-// Function to get a player's choice
-function getHumanChoice() {
-    let humanInput = prompt("Enter your choice (rock, paper, or scissors):");
-        
-    while (!validChoices.includes(humanInput.toLowerCase())) {
-        humanInput = prompt("Invalid choice!. Please enter your choice (rock, paper, or scissors):");
-    }
-
-    return humanInput.toLowerCase();
-}
-
-function capitalize(word) {
+function capitalize(word){
     return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 }
 
-function playRound(humanChoice, computerChoice) {
-
-    humanChoice = humanChoice.toLowerCase();
-
-    if (humanChoice === computerChoice) {
-        alert(`It is a tie! You both chose ${humanChoice}`);
-
-    } else if ((humanChoice === "rock" && computerChoice === "scissors")||
-              (humanChoice === "scissors" && computerChoice === "paper") ||(humanChoice === "paper" && computerChoice === "rock")) {   
-                humanScore++;
-                alert(`Human wins! ${capitalize(humanChoice)} beats ${capitalize(computerChoice)}!`);      
-    } else {
-        computerScore++;
-        alert(`Computer wins! ${capitalize(computerChoice)} beats ${capitalize(humanChoice)}!`)
-    } 
-
-    alert(`Score: You: ${humanScore}, Computer score: ${computerScore}`);
-
+function getComputerSelection(){
+    const randomInteger = Math.floor(Math.random() * choices.length)
+    return choices[randomInteger];
 }
 
-function getWinner() {
-    if (humanScore > computerScore) {
-        alert(`The Human has won! Scores: ${humanScore}, Computer score: ${computerScore}`);
-    } else if (computerScore > humanScore) {
-        alert(`The Computer has won! Scores: ${humanScore}, Computer score: ${computerScore}`); 
-    } else {
-        alert(`It is a TIE! Scores: ${humanScore}, Computer score: ${computerScore}`)
+function handlePlayerSelection(event){
+    const playerSelection = event.target.getAttribute('data-choice');
+    const computerSelection = getComputerSelection();
+
+    playRound(playerSelection, computerSelection);
+}
+
+function disableButtons(){
+    rockButton.disabled = true;
+    paperButton.disabled = true;
+    scissorsButton.disabled = true;
+}
+
+function getWinner(){
+    if (playerScore === 5) {
+        result.textContent = "🏆 Player wins the game!";
+        disableButtons();
+    } else if (computerScore === 5){
+        result.textContent = "🤖 Computer wins the game!";
+        disableButtons();
     }
 }
 
-function playGame() {
+function playRound(playerSelection, computerSelection){
+    let resultMessage = '';
+    const playerName = (getInputValue() || "Player");
 
-    for (let i = 1; i <= 5; i++) {
-        let humanChoice = getHumanChoice();
-        let computerChoice = getComputerChoice();
+    if (playerSelection === computerSelection){
+        resultMessage = `It's a tie! Both ${capitalize(playerName)} and Computer selected the same thing`;
+    } else if ((playerSelection === 'rock' && computerSelection === 'scissors') ||
+                (playerSelection === 'paper' && computerSelection === 'rock') ||
+                (playerSelection === 'scissors' && computerSelection === 'paper')) {
+                    playerScore++;
+                    resultMessage = `${capitalize(playerName)} wins! ${capitalize(playerSelection)} beats ${capitalize(computerSelection)}!`
+                } else {
+                    computerScore++;
+                    resultMessage = `Computer wins! ${capitalize(computerSelection)} beats ${capitalize(playerSelection)}!`
+                }
 
-        playRound(humanChoice, computerChoice)
-    }
-    
-    getWinner();
-    
+                result.textContent = resultMessage;
+                finalScore.textContent = `Player: ${playerScore} | Computer: ${computerScore}`;
+
+                getWinner();
 }
 
-// Start the game
-playGame();
+rockButton.addEventListener('click', handlePlayerSelection);
+paperButton.addEventListener('click', handlePlayerSelection);
+scissorsButton.addEventListener('click', handlePlayerSelection);
